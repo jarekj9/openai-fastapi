@@ -13,7 +13,7 @@ docker run --rm -ti --p 8003:80 fastapi-openai
 docker tag fastapi-openai registryname.azurecr.io/fastapi-openai:latest
 az acr login -n registryname.azurecr.io
 docker push  registryname.azurecr.io/fastapi-openai:latest
-az container create --resource-group RG-name --file container-deployment.yaml
+az container create --resource-group RG-name --file azure-deploy.yaml
 ```
 ##### Deploy to Azure App Service:
 - create app service  ( linux, python 3.10)
