@@ -1,6 +1,6 @@
 
 # openai with fastapi
-##### Run as container:
+##### Build container:
 ```
 docker build -t fastapi-openai:latest .
 ```

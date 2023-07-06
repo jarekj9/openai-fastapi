@@ -1,0 +1,33 @@
+apiVersion: 2019-12-01
+location: germanywestcentral
+name: fastapi-openai
+properties:
+  containers:
+  - name: fastapi-openai
+    properties:
+      environmentVariables:
+        - name: 'OPENAI_API_KEY'
+          secureValue: 'removed'
+        - name: 'PASSWORD'
+          secureValue: 'removed'
+      image: registryname.azurecr.io/fastapi-openai:latest
+      ports: 
+       - port: 80
+      resources:
+        requests:
+          cpu: 1.0
+          memoryInGB: 1.5
+  osType: Linux
+  ipAddress:
+    type: Public
+    ports:
+    - protocol: tcp
+      port: 80
+    dnsNameLabel: y4r3k9-f-o
+  restartPolicy: OnFailure
+  imageRegistryCredentials:
+    - server: registryname.azurecr.io
+      username: containerregistryuser
+      password: removed
+tags: null
+type: Microsoft.ContainerInstance/containerGroups
