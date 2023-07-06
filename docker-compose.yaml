@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  fastapi-openai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi-openai
+    hostname: fastapi-openai
+    restart: unless-stopped
+    env_file:
+     - .env
+    volumes:
+     - ./app:/code/app
+    ports:
+     - 8087:80
+    

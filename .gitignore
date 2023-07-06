@@ -1,0 +1,4 @@
+./azure-deploy.yaml
+__pycache__
+.env
+logfile.log

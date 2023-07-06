@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test question answering</title>
+</head>
+<body>
+	<label for="guess">Hint:</label><br>
+	<input id="guess"></input><br><br>
+	<label for="question">Enter your question:</label><br>
+	<textarea id="question" rows="20" cols="100"></textarea><br><br>
+	<button onclick="getAnswer()">Get Answer</button><br><br>
+	<label for="answer">Answer:</label><br>
+	<textarea id="answer" rows="20" cols="100"></textarea><br><br>
+	<button onclick="previousQuestion()">Previous</button>
+	<button onclick="nextQuestion()">Next</button>
+	<button onclick="clearHistory()">Clear History</button><br><br>
+	<div id="history"></div>
+	<script>
+		var questionHistory = [];
+		var currentQuestion = -1;
+
+		// Load question history from cookie
+		var cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('questionHistory='));
+		if (cookie) {
+			questionHistory = JSON.parse(cookie.split('=')[1]);
+			currentQuestion = questionHistory.length - 1;
+		}
+		updateHistoryDisplay();
+
+		function getAnswer() {
+			var question = document.getElementById("question").value;
+			var guess = document.getElementById("guess").value;
+			var xhr = new XMLHttpRequest();
+			xhr.open("POST", window.location.href, true);
+			xhr.setRequestHeader("Content-Type", "application/json");
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState === 4 && xhr.status === 200) {
+					var responseData = JSON.parse(xhr.responseText);
+					var answer = responseData.response;
+					document.getElementById("answer").value = answer;
+					addToHistory(question, answer);
+				}
+			};
+			xhr.send(JSON.stringify({question: question, guess: guess}));
+		}
+
+		function addToHistory(question, answer) {
+			questionHistory.push({question: question, answer: answer});
+			currentQuestion = questionHistory.length - 1;
+			updateHistoryDisplay();
+			saveHistoryToCookie();
+		}
+
+		function previousQuestion() {
+			if (currentQuestion > 0) {
+				currentQuestion--;
+				updateQuestionAnswerDisplay();
+			}
+		}
+
+		function nextQuestion() {
+			if (currentQuestion < questionHistory.length - 1) {
+				currentQuestion++;
+				updateQuestionAnswerDisplay();
+			}
+		}
+
+		function clearHistory() {
+			questionHistory = [];
+			currentQuestion = -1;
+			updateHistoryDisplay();
+			saveHistoryToCookie();
+		}
+
+		function updateQuestionAnswerDisplay() {
+			document.getElementById("question").value = questionHistory[currentQuestion].question;
+			document.getElementById("answer").value = questionHistory[currentQuestion].answer;
+			updateHistoryDisplay();
+		}
+
+		function updateHistoryDisplay() {
+			var historyDisplay = "";
+			for (var i = 0; i < questionHistory.length; i++) {
+				if (i === currentQuestion) {
+					historyDisplay += "<b>" + (i+1) + "</b> ";
+				} else {
+					historyDisplay += (i+1) + " ";
+				}
+			}
+			document.getElementById("history").innerHTML = "History (" + questionHistory.length + " questions): " + historyDisplay;
+		}
+
+		function saveHistoryToCookie() {
+			document.cookie = "questionHistory=" + JSON.stringify(questionHistory);
+		}
+	</script>
+</body>
+</html>
