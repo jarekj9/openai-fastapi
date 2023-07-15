@@ -60,6 +60,9 @@
 		function getAnswer() {
 			var question = document.getElementById("question").value;
 			var guess = document.getElementById("guess").value;
+			if(guess === "") {
+				guess = getGuessCookie();
+			}
 			var xhr = new XMLHttpRequest();
 			document.getElementById("loading-spinner").hidden = false;
 			xhr.open("POST", window.location.href, true);
@@ -70,6 +73,7 @@
 					var answer = responseData.response;
 					document.getElementById("answer").value = answer;
 					addToHistory(question, answer);
+					saveGuessCookie(guess);
 				}
 				document.getElementById("loading-spinner").hidden = true;
 			};
@@ -124,6 +128,21 @@
 
 		function saveHistoryToCookie() {
 			document.cookie = "questionHistory=" + JSON.stringify(questionHistory);
+		}
+
+		function saveGuessCookie(guess) {
+			if(guess !== "")
+			{
+				document.cookie = "hint="+guess+"; expires=" + new Date(Date.now() + 3600000).toUTCString();
+			}
+		}
+
+		function getGuessCookie() {
+			var cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('hint='));
+			if (cookie) {
+				return cookie.split('=')[1];
+			}
+			return "";
 		}
 	</script>
 </body>
